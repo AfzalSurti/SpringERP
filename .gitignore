@@ -38,6 +38,9 @@ Thumbs.db
 logs/
 npm-debug.log*
 
+### Local build caches ###
+.m2/
+
 # Each subproject (backend/, frontend/) has its own .gitignore
 # for build artifacts (target/, node_modules/, dist/, etc.)
 
