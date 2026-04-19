@@ -105,8 +105,8 @@ export const CustomersPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-800">Customers</h2>
-          <p className="text-sm text-gray-500">{customers?.length ?? 0} total records</p>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100">Customers</h2>
+          <p className="text-sm text-gray-500 dark:text-slate-400">{customers?.length ?? 0} total records</p>
         </div>
         <Button onClick={openCreate} leftIcon={
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,7 +127,7 @@ export const CustomersPage: React.FC = () => {
             key: 'firstName',
             header: 'Name',
             render: (c) => (
-              <span className="font-medium text-gray-800">
+              <span className="font-medium text-gray-800 dark:text-slate-100">
                 {c.firstName} {c.lastName}
               </span>
             ),

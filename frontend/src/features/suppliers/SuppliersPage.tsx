@@ -58,8 +58,8 @@ export const SuppliersPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-800">Suppliers</h2>
-          <p className="text-sm text-gray-500">{suppliers?.length ?? 0} total records</p>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100">Suppliers</h2>
+          <p className="text-sm text-gray-500 dark:text-slate-400">{suppliers?.length ?? 0} total records</p>
         </div>
         <Button onClick={openCreate} leftIcon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}>
           Add Supplier
@@ -71,7 +71,7 @@ export const SuppliersPage: React.FC = () => {
         data={suppliers ?? []}
         keyExtractor={(s) => s.id}
         columns={[
-          { key: 'name', header: 'Name', render: (s) => <span className="font-medium text-gray-800">{s.name}</span> },
+          { key: 'name', header: 'Name', render: (s) => <span className="font-medium text-gray-800 dark:text-slate-100">{s.name}</span> },
           { key: 'companyName', header: 'Company', render: (s) => s.companyName || '—' },
           { key: 'email', header: 'Email' },
           { key: 'phone', header: 'Phone' },
