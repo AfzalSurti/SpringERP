@@ -1,5 +1,6 @@
 package com.springerp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "interactions", "orders"})
 public class Customer extends BaseEntity {
 
     @NotBlank(message = "Customer name cannot be blank")
@@ -41,7 +43,8 @@ public class Customer extends BaseEntity {
     private String address;
 
     @NotNull(message = "Company is required")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "invoices", "customers", "orders", "parentCompany"})
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 

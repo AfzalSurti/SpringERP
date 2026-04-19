@@ -1,5 +1,6 @@
 package com.springerp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "attendances", "leaves", "salaries"})
 public class Employee extends BaseEntity {
 
     @Column(name = "employee_id", nullable = false, unique = true)
@@ -57,7 +59,8 @@ public class Employee extends BaseEntity {
     @Column(name = "passport_number")
     private String passportNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "parentDepartment", "subDepartments"})
     @JoinColumn(name = "department_id")
     private Department department;
 

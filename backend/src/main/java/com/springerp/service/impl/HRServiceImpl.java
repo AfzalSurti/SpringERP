@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class HRServiceImpl implements HRService {
     private final AttendanceRepository attendanceRepository;
     private final LeaveRepository leaveRepository;
     private final SalaryRepository salaryRepository;
+    private final UserRepository userRepository;
 
     // Department Management
     @Override
@@ -68,6 +70,34 @@ public class HRServiceImpl implements HRService {
     @Transactional
     public Employee createEmployee(Employee employee) {
         log.info("Creating employee: {}", employee.getEmployeeId());
+        if (employee.getDepartment() == null) {
+            employee.setDepartment(departmentRepository.findById(1L)
+                    .orElseThrow(() -> new ResourceNotFoundException("Default department not found with id: 1")));
+        }
+        if (employee.getDateOfJoining() == null) {
+            employee.setDateOfJoining(LocalDate.now());
+        }
+        if (employee.getEmployeeId() == null || employee.getEmployeeId().isBlank()) {
+            employee.setEmployeeId("EMP-" + System.currentTimeMillis());
+        }
+        if (employee.getUserId() == null) {
+            User user = userRepository.findByEmail(employee.getEmail()).orElseGet(() -> {
+                User newUser = new User();
+                newUser.setFirstName(employee.getFirstName());
+                newUser.setLastName(employee.getLastName());
+                newUser.setEmail(employee.getEmail());
+                newUser.setPassword("Temp@123");
+                newUser.setDateOfBirth(employee.getDateOfBirth() != null ? employee.getDateOfBirth() : LocalDate.of(1990, 1, 1));
+                newUser.setRole("EMPLOYEE");
+                newUser.setPhoneNumber(employee.getPhone() != null ? employee.getPhone() : "0000000000");
+                newUser.setAddress(employee.getAddress() != null ? employee.getAddress() : "Pending");
+                return userRepository.save(newUser);
+            });
+            employee.setUserId(user.getId());
+        }
+        if (employee.getBaseSalary() == null) {
+            employee.setBaseSalary(BigDecimal.ZERO);
+        }
         employee.setIsActive(true);
         employee.setEmploymentStatus(Employee.EmploymentStatus.ACTIVE);
         return employeeRepository.save(employee);

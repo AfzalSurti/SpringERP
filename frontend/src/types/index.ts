@@ -70,6 +70,7 @@ export interface Customer {
   stage?: string;
   lastContact?: string;
   value?: number;
+  companyId?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -83,6 +84,7 @@ export interface CreateCustomerRequest {
   city?: string;
   country?: string;
   companyName?: string;
+  companyId?: number;
   notes?: string;
 }
 
@@ -154,6 +156,7 @@ export interface Employee {
   phone?: string;
   designation?: string;
   department?: string;
+  departmentId?: number;
   employmentType?: EmploymentType;
   employmentStatus?: EmploymentStatus;
   dateOfJoining?: string;
