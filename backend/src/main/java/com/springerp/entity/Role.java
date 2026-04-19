@@ -38,7 +38,7 @@ public class Role extends BaseEntity {
     @Column(name = "is_system_role", nullable = false)
     private Boolean isSystemRole = false;
 
-    @Column(name = "permissions", columnDefinition = "LONGTEXT")
+    @Column(name = "permissions", columnDefinition = "TEXT")
     private String permissions; // JSON array of permission codes
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)

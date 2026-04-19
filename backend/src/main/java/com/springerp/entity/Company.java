@@ -40,7 +40,7 @@ public class Company {
     @Column(name = "status")
     private String status = "ACTIVE";
 
-    @Column(name = "config", columnDefinition = "LONGTEXT")
+    @Column(name = "config", columnDefinition = "TEXT")
     private String config;
 
     @Column(name = "subscription_tier")

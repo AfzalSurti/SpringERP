@@ -37,7 +37,7 @@ public class Asset extends BaseEntity {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "description", columnDefinition = "LONGTEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "acquisition_date", nullable = false)

@@ -25,14 +25,14 @@ public class WorkflowDefinition extends BaseEntity {
     @Column(name = "workflow_code", nullable = false, unique = true)
     private String workflowCode;
 
-    @Column(name = "description", columnDefinition = "LONGTEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "process_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProcessType processType; // INVOICE_APPROVAL, PO_APPROVAL, PAYMENT_APPROVAL, LEAVE_APPROVAL
 
-    @Column(name = "workflow_definition", columnDefinition = "LONGTEXT")
+    @Column(name = "workflow_definition", columnDefinition = "TEXT")
     private String workflowDefinition; // JSON representation of workflow structure
 
     @Column(name = "version")

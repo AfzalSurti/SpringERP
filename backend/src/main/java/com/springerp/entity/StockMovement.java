@@ -60,7 +60,7 @@ public class StockMovement extends BaseEntity {
     @Column(name = "reason")
     private String reason;
 
-    @Column(name = "notes", columnDefinition = "LONGTEXT")
+    @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
     @Column(name = "approved_by")

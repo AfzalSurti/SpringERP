@@ -9,15 +9,18 @@ server:
     context-path: /api/v1
 
 spring:
+  config:
+    import: optional:file:../.env[.properties],optional:file:.env[.properties]
+
   application:
     name: SpringERP
 
   # Data Source Configuration
   datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:${MYSQL_URL:}}
+    username: ${SPRING_DATASOURCE_USERNAME:${MYSQL_USERNAME:}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${MYSQL_PASSWORD:}}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -34,7 +37,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
         generate_statistics: false
         jdbc:
           batch_size: 25
@@ -44,7 +47,7 @@ spring:
 
   # Flyway Configuration
   flyway:
-    enabled: true
+    enabled: ${SPRING_FLYWAY_ENABLED:true}
     locations: classpath:db/migration
     baseline-on-migrate: true
     baseline-version: 0

@@ -51,11 +51,11 @@ public class AuditLog {
     private LocalDateTime timestamp;
 
     @Lob
-    @Column(name = "old_values", columnDefinition = "LONGTEXT")
+    @Column(name = "old_values", columnDefinition = "TEXT")
     private String oldValues; // JSON format
 
     @Lob
-    @Column(name = "new_values", columnDefinition = "LONGTEXT")
+    @Column(name = "new_values", columnDefinition = "TEXT")
     private String newValues; // JSON format
 
     @Column(name = "change_description", length = 1000)

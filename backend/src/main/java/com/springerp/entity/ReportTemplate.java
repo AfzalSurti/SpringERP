@@ -25,7 +25,7 @@ public class ReportTemplate extends BaseEntity {
     @Column(name = "template_code", nullable = false, unique = true)
     private String templateCode;
 
-    @Column(name = "description", columnDefinition = "LONGTEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "report_type", nullable = false)
@@ -35,14 +35,14 @@ public class ReportTemplate extends BaseEntity {
     @Column(name = "report_category")
     private String reportCategory;
 
-    @Column(name = "template_definition", columnDefinition = "LONGTEXT")
+    @Column(name = "template_definition", columnDefinition = "TEXT")
     private String templateDefinition; // XML/JSON definition
 
     @Column(name = "display_format")
     @Enumerated(EnumType.STRING)
     private DisplayFormat displayFormat = DisplayFormat.TABLE; // TABLE, CHART, DASHBOARD, PDF
 
-    @Column(name = "data_source_query", columnDefinition = "LONGTEXT")
+    @Column(name = "data_source_query", columnDefinition = "TEXT")
     private String dataSourceQuery;
 
     @Column(name = "refresh_frequency")
@@ -55,7 +55,7 @@ public class ReportTemplate extends BaseEntity {
     @Column(name = "is_scheduled", nullable = false)
     private Boolean isScheduled = false;
 
-    @Column(name = "scheduled_recipients", columnDefinition = "LONGTEXT")
+    @Column(name = "scheduled_recipients", columnDefinition = "TEXT")
     private String scheduledRecipients; // JSON array of email addresses
 
     @Column(name = "owner_id")

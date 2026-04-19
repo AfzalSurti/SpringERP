@@ -42,7 +42,7 @@ public class Notification extends BaseEntity {
     @Column(name = "subject")
     private String subject;
 
-    @Column(name = "message", columnDefinition = "LONGTEXT")
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
     @Column(name = "status", nullable = false)

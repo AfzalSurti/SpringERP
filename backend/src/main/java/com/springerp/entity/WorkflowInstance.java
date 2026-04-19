@@ -53,7 +53,7 @@ public class WorkflowInstance extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.IN_PROGRESS; // IN_PROGRESS, APPROVED, REJECTED, CANCELLED, EXPIRED
 
-    @Column(name = "approval_comments", columnDefinition = "LONGTEXT")
+    @Column(name = "approval_comments", columnDefinition = "TEXT")
     private String approvalComments;
 
     @Column(name = "started_at")

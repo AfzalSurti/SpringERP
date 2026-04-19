@@ -46,7 +46,7 @@ public class Leave extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private HalfDayType halfDayType; // FIRST_HALF, SECOND_HALF
 
-    @Column(name = "reason", columnDefinition = "LONGTEXT")
+    @Column(name = "reason", columnDefinition = "TEXT")
     private String reason;
 
     @Column(name = "status", nullable = false)

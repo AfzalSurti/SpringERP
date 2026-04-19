@@ -40,7 +40,7 @@ public class WorkflowApproval extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING; // PENDING, APPROVED, REJECTED, DELEGATED
 
-    @Column(name = "comments", columnDefinition = "LONGTEXT")
+    @Column(name = "comments", columnDefinition = "TEXT")
     private String comments;
 
     @Column(name = "approved_at")
