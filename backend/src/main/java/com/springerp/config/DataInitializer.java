@@ -93,12 +93,12 @@ public class DataInitializer implements ApplicationRunner {
         }
 
         Company company = new Company();
-        company.setName("SpringERP");
-        company.setCompanyName("SpringERP Default Company");
-        company.setCompanyCode("SPRINGERP");
-        company.setRegistrationNumber("SPRINGERP-001");
-        company.setTaxId("SPRINGERP-TAX");
-        company.setVatNumber("SPRINGERP-VAT");
+        company.setName("SmartBiz");
+        company.setCompanyName("SmartBiz Default Company");
+        company.setCompanyCode("SMARTBIZ");
+        company.setRegistrationNumber("SMARTBIZ-001");
+        company.setTaxId("SMARTBIZ-TAX");
+        company.setVatNumber("SMARTBIZ-VAT");
         company.setAddress("123 Main Street");
         company.setCity("Springfield");
         company.setState("Default");

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLogin } from '../../hooks/useAuth';
 import { Icons } from '../../components/Icons';
 import { useThemeStore } from '../../store/theme.store';
+import { BrandMark } from '../../components/BrandMark';
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -51,24 +52,17 @@ export const LoginPage: React.FC = () => {
         
         <div className="relative">
           <div className="flex items-center gap-8 mb-32 animate-fade-up">
-             <div className="w-20 h-20 bg-indigo-600 rounded-[2.2rem] flex items-center justify-center shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-1000 relative group">
-                <div className="absolute -inset-2 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span className="text-white font-black text-5xl italic tracking-tighter relative z-10">S</span>
-             </div>
-             <div>
-                <span className="text-3xl font-black tracking-tighter text-slate-950 dark:text-white block leading-none">SPRING ERP</span>
-                <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-500 uppercase tracking-[0.7em] mt-2 block opacity-70">Sovereign Intelligence Architecture</span>
-             </div>
+             <BrandMark size="lg" />
           </div>
 
           <div className="space-y-12 max-w-5xl">
             <h1 className="text-[12rem] font-black tracking-tighter text-slate-950 dark:text-white leading-[0.7] opacity-95 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-              Strategic <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 via-indigo-500 to-slate-400 dark:from-indigo-300 dark:via-white dark:to-indigo-700 text-glow-indigo">Nexus.</span>
+              Smart <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-500 to-indigo-700 dark:from-cyan-300 dark:via-white dark:to-indigo-500 text-glow-indigo">Biz.</span>
             </h1>
             <p className="text-3xl text-slate-500 dark:text-slate-400 font-light leading-snug max-w-2xl animate-fade-up" style={{ animationDelay: '0.4s' }}>
-              Orchestrate the global functional stack with zero-latency autonomous loops. <br/>
-              <span className="text-slate-800 dark:text-slate-200 font-bold uppercase tracking-[0.3em] text-sm mt-6 block">Unified Operations OS v5.0</span>
+              Run finance, sales, inventory, HR, and operations from one unified workspace. <br/>
+              <span className="text-slate-800 dark:text-slate-200 font-bold uppercase tracking-[0.3em] text-sm mt-6 block">Unified Business OS</span>
             </p>
           </div>
         </div>

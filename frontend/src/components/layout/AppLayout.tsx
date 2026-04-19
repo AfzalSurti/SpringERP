@@ -18,7 +18,7 @@ const pageTitles: Record<string, string> = {
 
 export const AppLayout: React.FC = () => {
   const { pathname } = useLocation();
-  const title = pageTitles[pathname] ?? 'SpringERP';
+  const title = pageTitles[pathname] ?? 'SmartBiz';
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-slate-950 overflow-hidden transition-colors duration-300">

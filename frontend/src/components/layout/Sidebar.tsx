@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { BrandMark } from '../BrandMark';
 
 interface NavItem {
   label: string;
@@ -135,18 +136,7 @@ export const Sidebar: React.FC = () => {
     <aside className="h-screen w-64 bg-white dark:bg-slate-900 text-gray-800 dark:text-white flex flex-col fixed left-0 top-0 z-30 shadow-xl border-r border-gray-100 dark:border-slate-800 transition-colors duration-300">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 dark:bg-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <p className="font-bold text-gray-900 dark:text-white text-sm">SpringERP</p>
-            <p className="text-xs text-gray-400 dark:text-slate-500">Enterprise System</p>
-          </div>
-        </div>
+        <BrandMark size="sm" />
       </div>
 
       {/* Navigation */}
@@ -182,7 +172,7 @@ export const Sidebar: React.FC = () => {
 
       {/* Footer */}
       <div className="px-3 py-4 border-t border-gray-100 dark:border-slate-800">
-        <p className="text-xs text-gray-400 dark:text-slate-600 text-center">© 2026 SpringERP</p>
+        <p className="text-xs text-gray-400 dark:text-slate-600 text-center">© 2026 SmartBiz</p>
       </div>
     </aside>
   );

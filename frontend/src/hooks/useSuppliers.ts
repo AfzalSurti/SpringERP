@@ -22,7 +22,10 @@ export function useCreateSupplier() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateSupplierRequest) => suppliersApi.create(data),
-    onSuccess: () => {
+    onSuccess: (createdSupplier) => {
+      qc.setQueryData([SUPPLIERS_KEY], (current: any) =>
+        Array.isArray(current) ? [createdSupplier, ...current] : [createdSupplier]
+      );
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier created successfully');
     },
@@ -35,7 +38,12 @@ export function useUpdateSupplier() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<CreateSupplierRequest> }) =>
       suppliersApi.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedSupplier) => {
+      qc.setQueryData([SUPPLIERS_KEY], (current: any) =>
+        Array.isArray(current)
+          ? current.map((supplier) => (supplier.id === updatedSupplier.id ? updatedSupplier : supplier))
+          : current
+      );
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier updated successfully');
     },
@@ -47,7 +55,10 @@ export function useDeleteSupplier() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => suppliersApi.delete(id),
-    onSuccess: () => {
+    onSuccess: (_, deletedId) => {
+      qc.setQueryData([SUPPLIERS_KEY], (current: any) =>
+        Array.isArray(current) ? current.filter((supplier) => supplier.id !== deletedId) : current
+      );
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier deleted successfully');
     },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
 import { Company } from '../../types';
+import { BrandMark } from '../../components/BrandMark';
 
 interface CompanySelectProps {
   companies: Company[];
@@ -19,7 +20,7 @@ const CompanySelect: React.FC<CompanySelectProps> = ({ companies, onSelect, isDa
       'SYNCHRONIZING QUANTUM CORES',
       'ESTABLISHING TACTICAL UPLINK',
       'VERIFYING NODE INTEGRITY',
-      'INITIALIZING NEXUS PROTOCOLS'
+      'INITIALIZING SMARTBIZ WORKSPACE'
     ];
     let i = 0;
     const interval = setInterval(() => {
@@ -37,16 +38,7 @@ const CompanySelect: React.FC<CompanySelectProps> = ({ companies, onSelect, isDa
       <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-purple-500/10 dark:bg-purple-600/5 rounded-full blur-[180px]"></div>
       
       <header className="flex justify-between items-center relative z-10 mb-12 animate-fade-up">
-         <div className="flex items-center gap-6">
-            <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl rotate-3 hover:rotate-0 transition-all duration-1000 relative group">
-               <div className="absolute -inset-1 bg-indigo-500/30 blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-               <span className="text-white font-black text-3xl italic tracking-tighter relative z-10">N</span>
-            </div>
-            <div>
-               <h1 className="text-2xl font-black tracking-tighter text-slate-950 dark:text-white leading-none">Enterprise Registry</h1>
-               <p className="text-[10px] font-black text-indigo-600 dark:text-indigo-500 uppercase tracking-[0.5em] mt-1.5 block opacity-70">Unified Multi-Tenant Core</p>
-            </div>
-         </div>
+         <BrandMark size="md" />
          <div className="flex items-center gap-4">
             <button 
               onClick={toggleTheme} 
@@ -63,7 +55,7 @@ const CompanySelect: React.FC<CompanySelectProps> = ({ companies, onSelect, isDa
             <div className="text-center space-y-6 animate-fade-up" style={{ animationDelay: '0.2s' }}>
                <div className="relative inline-block">
                   <h2 className="text-7xl lg:text-[8rem] font-black tracking-tighter text-slate-950 dark:text-white leading-tight">
-                    Initialize <span className="quantum-shimmer text-glow-indigo">Enterprise Uplink.</span>
+                    Initialize <span className="quantum-shimmer text-glow-indigo">SmartBiz.</span>
                   </h2>
                </div>
                <div className="flex items-center justify-center gap-4">

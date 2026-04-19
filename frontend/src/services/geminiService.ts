@@ -13,7 +13,7 @@ export const analyzeFinancialHealth = async (data: any[]): Promise<string> => {
 export const generateCustomerEmail = async (customer: any, context: string): Promise<string> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(`Subject: Nexus Sync: ${customer.companyName ?? customer.company} & Next Steps
+      resolve(`Subject: SmartBiz Follow-up: ${customer.companyName ?? customer.company} & Next Steps
 
 Hi ${customer.firstName ?? customer.name},
 
@@ -27,7 +27,7 @@ Our analytics indicate that your account profile representing ₹${(customer.val
 Please let me know a convenient time to reconnect.
 
 Best,
-Nexus Node Leader`);
+SmartBiz Team`);
     }, 1200);
   });
 };

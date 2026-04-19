@@ -15,7 +15,7 @@ export const DashboardPage: React.FC = () => {
   // Use user's company information if available, otherwise fallback to default
   const company: Company = {
     id: 'CORE-SYN',
-    name: 'Spring ERP',
+    name: 'SmartBiz',
     // You can swap this with real user.company data if it exists in your schema
   };
 
@@ -46,7 +46,7 @@ export const DashboardPage: React.FC = () => {
             <div className="space-y-8">
               <h1 className="text-8xl md:text-[9rem] font-black tracking-tighter text-slate-950 dark:text-white leading-[0.75] mb-4">
                 {company.name.split(' ')[0]} <br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 via-slate-500 to-indigo-950 dark:from-indigo-300 dark:via-white dark:to-indigo-700 text-glow-indigo">Nexus OS.</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-500 to-indigo-700 dark:from-cyan-300 dark:via-white dark:to-indigo-500 text-glow-indigo">SmartBiz.</span>
               </h1>
               <p className="text-2xl text-slate-600 dark:text-slate-400 font-light max-w-2xl leading-relaxed">
                 Autonomous orchestration of global strategic assets for <span className="font-bold text-slate-900 dark:text-slate-100">{company.name}</span>. <br/>
