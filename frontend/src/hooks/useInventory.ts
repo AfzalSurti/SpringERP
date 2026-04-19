@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { inventoryApi, type InventoryItem, type StockMovement } from '../api/inventory.api';
+import { getApiErrorMessage } from '../utils/apiError';
 
 const INVENTORY_KEY = 'inventory-items';
 const MOVEMENTS_KEY = 'stock-movements';
@@ -35,7 +36,7 @@ export function useCreateInventoryItem() {
       qc.invalidateQueries({ queryKey: [INVENTORY_KEY] });
       toast.success('Inventory item created');
     },
-    onError: () => toast.error('Failed to create inventory item'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to create inventory item')),
   });
 }
 
@@ -48,7 +49,7 @@ export function useUpdateInventoryItem() {
       qc.invalidateQueries({ queryKey: [INVENTORY_KEY] });
       toast.success('Inventory item updated');
     },
-    onError: () => toast.error('Failed to update inventory item'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to update inventory item')),
   });
 }
 
@@ -60,7 +61,7 @@ export function useDeleteInventoryItem() {
       qc.invalidateQueries({ queryKey: [INVENTORY_KEY] });
       toast.success('Inventory item deleted');
     },
-    onError: () => toast.error('Failed to delete inventory item'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to delete inventory item')),
   });
 }
 
@@ -77,7 +78,7 @@ export function useAdjustStock() {
       qc.invalidateQueries({ queryKey: [MOVEMENTS_KEY] });
       toast.success('Stock adjusted successfully');
     },
-    onError: () => toast.error('Failed to adjust stock'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to adjust stock')),
   });
 }
 
@@ -97,7 +98,7 @@ export function useRecordStockMovement() {
       qc.invalidateQueries({ queryKey: [INVENTORY_KEY] });
       toast.success('Stock movement recorded');
     },
-    onError: () => toast.error('Failed to record stock movement'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to record stock movement')),
   });
 }
 
@@ -111,7 +112,7 @@ export function useApproveStockMovement() {
       qc.invalidateQueries({ queryKey: [INVENTORY_KEY] });
       toast.success('Stock movement approved');
     },
-    onError: () => toast.error('Failed to approve stock movement'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to approve stock movement')),
   });
 }
 

@@ -20,13 +20,7 @@ const supplierSchema = z.object({
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   phone: z.string().optional(),
   address: z.string().optional(),
-  city: z.string().optional(),
-  country: z.string().optional(),
-  contactPerson: z.string().optional(),
-  website: z.string().optional(),
-  taxId: z.string().optional(),
-  paymentTerms: z.string().optional(),
-  notes: z.string().optional(),
+  companyName: z.string().optional(),
 });
 
 type SupplierFormData = z.infer<typeof supplierSchema>;
@@ -78,11 +72,10 @@ export const SuppliersPage: React.FC = () => {
         keyExtractor={(s) => s.id}
         columns={[
           { key: 'name', header: 'Name', render: (s) => <span className="font-medium text-gray-800">{s.name}</span> },
+          { key: 'companyName', header: 'Company', render: (s) => s.companyName || '—' },
           { key: 'email', header: 'Email' },
           { key: 'phone', header: 'Phone' },
-          { key: 'contactPerson', header: 'Contact Person' },
-          { key: 'city', header: 'City' },
-          { key: 'paymentTerms', header: 'Payment Terms' },
+          { key: 'address', header: 'Address', render: (s) => s.address || '—' },
           {
             key: 'actions', header: 'Actions',
             render: (s) => (
@@ -98,15 +91,12 @@ export const SuppliersPage: React.FC = () => {
       <Modal isOpen={modalOpen} onClose={closeModal} title={editTarget ? 'Edit Supplier' : 'Add Supplier'} size="lg">
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input label="Supplier Name" required error={errors.name?.message} {...register('name')} />
+          <Input label="Company Name" {...register('companyName')} />
           <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
           <Input label="Phone" {...register('phone')} />
-          <Input label="Contact Person" {...register('contactPerson')} />
-          <Input label="Website" {...register('website')} />
-          <Input label="Tax ID" {...register('taxId')} />
-          <Input label="Payment Terms" {...register('paymentTerms')} />
-          <Input label="City" {...register('city')} />
-          <Input label="Country" {...register('country')} />
-          <Input label="Address" {...register('address')} />
+          <div className="sm:col-span-2">
+            <Input label="Address" {...register('address')} />
+          </div>
           <div className="sm:col-span-2 flex justify-end gap-3 mt-2">
             <Button type="button" variant="secondary" onClick={closeModal}>Cancel</Button>
             <Button type="submit" isLoading={creating || updating}>{editTarget ? 'Update' : 'Create'}</Button>

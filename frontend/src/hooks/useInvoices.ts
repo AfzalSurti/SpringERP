@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { invoicesApi } from '../api/invoices.api';
 import type { CreateInvoiceRequest } from '../types';
+import { getApiErrorMessage } from '../utils/apiError';
 
 export const INVOICES_KEY = 'invoices';
 
@@ -29,7 +30,7 @@ export function useCreateInvoice() {
       qc.invalidateQueries({ queryKey: [INVOICES_KEY] });
       toast.success('Invoice created successfully');
     },
-    onError: () => toast.error('Failed to create invoice'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to create invoice')),
   });
 }
 
@@ -42,7 +43,7 @@ export function useUpdateInvoice() {
       qc.invalidateQueries({ queryKey: [INVOICES_KEY] });
       toast.success('Invoice updated successfully');
     },
-    onError: () => toast.error('Failed to update invoice'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to update invoice')),
   });
 }
 
@@ -54,7 +55,7 @@ export function useDeleteInvoice() {
       qc.invalidateQueries({ queryKey: [INVOICES_KEY] });
       toast.success('Invoice deleted successfully');
     },
-    onError: () => toast.error('Failed to delete invoice'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to delete invoice')),
   });
 }
 

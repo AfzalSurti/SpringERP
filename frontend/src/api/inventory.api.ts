@@ -41,28 +41,75 @@ export interface Warehouse {
   isActive?: boolean;
 }
 
+function mapInventoryItem(item: any): InventoryItem {
+  return {
+    id: item.id,
+    sku: item.sku,
+    productId: item.product?.id,
+    productName: item.product?.name,
+    warehouseId: item.warehouseId,
+    quantityOnHand: item.quantityOnHand ?? 0,
+    quantityReserved: item.quantityReserved ?? 0,
+    quantityAvailable: item.quantityAvailable ?? 0,
+    reorderLevel: item.reorderLevel ?? 0,
+    reorderQuantity: item.reorderQuantity ?? 0,
+    unitCost: item.unitCost != null ? Number(item.unitCost) : undefined,
+    location: item.location,
+    isActive: item.isActive,
+    lastMovementDate: item.lastMovementDate,
+  };
+}
+
+function toInventoryPayload(data: Partial<InventoryItem>) {
+  return {
+    sku: data.sku,
+    product: data.productId ? { id: data.productId } : undefined,
+    warehouseId: data.warehouseId,
+    quantityOnHand: data.quantityOnHand ?? 0,
+    quantityReserved: data.quantityReserved ?? 0,
+    reorderLevel: data.reorderLevel ?? 10,
+    reorderQuantity: data.reorderQuantity ?? 50,
+    unitCost: data.unitCost,
+    location: data.location,
+  };
+}
+
+function mapWarehouse(warehouse: any): Warehouse {
+  return {
+    id: warehouse.id,
+    warehouseCode: warehouse.warehouseCode,
+    warehouseName: warehouse.warehouseName,
+    address: warehouse.address,
+    city: warehouse.city,
+    isActive: warehouse.isActive,
+  };
+}
+
 export const inventoryApi = {
   // Inventory Items
   getItems: (page = 0, size = 20) =>
-    apiClient.get<PageResponse<InventoryItem>>('/inventory/items', { params: { page, size } }).then((r) => r.data),
+    apiClient.get<PageResponse<any>>('/inventory/items', { params: { page, size } }).then((r) => ({
+      ...r.data,
+      content: r.data.content.map(mapInventoryItem),
+    })),
 
   getItemById: (id: number) =>
-    apiClient.get<InventoryItem>(`/inventory/items/${id}`).then((r) => r.data),
+    apiClient.get<any>(`/inventory/items/${id}`).then((r) => mapInventoryItem(r.data)),
 
   getItemBySku: (sku: string) =>
-    apiClient.get<InventoryItem>(`/inventory/items/sku/${sku}`).then((r) => r.data),
+    apiClient.get<any>(`/inventory/items/sku/${sku}`).then((r) => mapInventoryItem(r.data)),
 
   getLowStockItems: () =>
-    apiClient.get<InventoryItem[]>('/inventory/items/low-stock').then((r) => r.data),
+    apiClient.get<any[]>('/inventory/items/low-stock').then((r) => r.data.map(mapInventoryItem)),
 
   getCriticalStockItems: () =>
-    apiClient.get<InventoryItem[]>('/inventory/items/critical-stock').then((r) => r.data),
+    apiClient.get<any[]>('/inventory/items/critical-stock').then((r) => r.data.map(mapInventoryItem)),
 
   createItem: (data: Partial<InventoryItem>) =>
-    apiClient.post<InventoryItem>('/inventory/items', data).then((r) => r.data),
+    apiClient.post<any>('/inventory/items', toInventoryPayload(data)).then((r) => mapInventoryItem(r.data)),
 
   updateItem: (id: number, data: Partial<InventoryItem>) =>
-    apiClient.put<InventoryItem>(`/inventory/items/${id}`, data).then((r) => r.data),
+    apiClient.put<any>(`/inventory/items/${id}`, toInventoryPayload(data)).then((r) => mapInventoryItem(r.data)),
 
   deleteItem: (id: number) =>
     apiClient.delete(`/inventory/items/${id}`).then((r) => r.data),
@@ -87,7 +134,10 @@ export const inventoryApi = {
 
   // Warehouses
   getWarehouses: (page = 0, size = 20) =>
-    apiClient.get<PageResponse<Warehouse>>('/inventory/warehouses', { params: { page, size } }).then((r) => r.data),
+    apiClient.get<PageResponse<any>>('/inventory/warehouses', { params: { page, size } }).then((r) => ({
+      ...r.data,
+      content: r.data.content.map(mapWarehouse),
+    })),
 
   createWarehouse: (data: Partial<Warehouse>) =>
     apiClient.post<Warehouse>('/inventory/warehouses', data).then((r) => r.data),

@@ -1,9 +1,11 @@
 package com.springerp.service.impl;
 
 import com.springerp.entity.InventoryItem;
+import com.springerp.entity.Product;
 import com.springerp.entity.StockMovement;
 import com.springerp.entity.Warehouse;
 import com.springerp.repository.InventoryItemRepository;
+import com.springerp.repository.ProductRepository;
 import com.springerp.repository.StockMovementRepository;
 import com.springerp.repository.WarehouseRepository;
 import com.springerp.service.InventoryService;
@@ -31,11 +33,27 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryItemRepository inventoryItemRepository;
     private final StockMovementRepository stockMovementRepository;
     private final WarehouseRepository warehouseRepository;
+    private final ProductRepository productRepository;
 
     // Inventory Item Management
     @Override
     public InventoryItem createInventoryItem(InventoryItem item) {
+        validateInventoryItem(item, null);
         log.info("Creating inventory item: {}", item.getSku());
+
+        Product product = productRepository.findById(item.getProduct().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Selected product was not found"));
+
+        if (item.getWarehouseId() != null) {
+            warehouseRepository.findById(item.getWarehouseId())
+                    .orElseThrow(() -> new IllegalArgumentException("Selected warehouse was not found"));
+        }
+
+        item.setProduct(product);
+        item.setQuantityOnHand(defaultIfNull(item.getQuantityOnHand(), 0));
+        item.setQuantityReserved(defaultIfNull(item.getQuantityReserved(), 0));
+        item.setReorderLevel(defaultIfNull(item.getReorderLevel(), 10));
+        item.setReorderQuantity(defaultIfNull(item.getReorderQuantity(), 50));
         item.setIsActive(true);
         item.setQuantityAvailable(item.getQuantityOnHand() - item.getQuantityReserved());
         return inventoryItemRepository.save(item);
@@ -44,12 +62,26 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryItem updateInventoryItem(Long id, InventoryItem item) {
         log.info("Updating inventory item: {}", id);
+        validateInventoryItem(item, id);
         return inventoryItemRepository.findById(id)
                 .map(existing -> {
+                    Product product = productRepository.findById(item.getProduct().getId())
+                            .orElseThrow(() -> new IllegalArgumentException("Selected product was not found"));
+                    if (item.getWarehouseId() != null) {
+                        warehouseRepository.findById(item.getWarehouseId())
+                                .orElseThrow(() -> new IllegalArgumentException("Selected warehouse was not found"));
+                    }
+
+                    existing.setSku(item.getSku());
+                    existing.setProduct(product);
+                    existing.setWarehouseId(item.getWarehouseId());
+                    existing.setQuantityOnHand(defaultIfNull(item.getQuantityOnHand(), existing.getQuantityOnHand()));
+                    existing.setQuantityReserved(defaultIfNull(item.getQuantityReserved(), existing.getQuantityReserved()));
                     existing.setReorderLevel(item.getReorderLevel());
                     existing.setReorderQuantity(item.getReorderQuantity());
                     existing.setUnitCost(item.getUnitCost());
                     existing.setLocation(item.getLocation());
+                    existing.setQuantityAvailable(existing.getQuantityOnHand() - existing.getQuantityReserved());
                     return inventoryItemRepository.save(existing);
                 })
                 .orElseThrow(() -> new RuntimeException("Inventory item not found: " + id));
@@ -266,6 +298,40 @@ public class InventoryServiceImpl implements InventoryService {
     public void deleteInventoryItem(Long id) {
         log.info("Deleting inventory item: {}", id);
         inventoryItemRepository.deleteById(id);
+    }
+
+    private void validateInventoryItem(InventoryItem item, Long currentId) {
+        if (item.getSku() == null || item.getSku().isBlank()) {
+            throw new IllegalArgumentException("SKU is required");
+        }
+        if (item.getProduct() == null || item.getProduct().getId() == null) {
+            throw new IllegalArgumentException("Please select a product");
+        }
+        if (item.getQuantityOnHand() == null || item.getQuantityOnHand() < 0) {
+            throw new IllegalArgumentException("Quantity on hand must be zero or greater");
+        }
+        if (item.getQuantityReserved() != null && item.getQuantityReserved() < 0) {
+            throw new IllegalArgumentException("Reserved quantity must be zero or greater");
+        }
+        if (item.getQuantityReserved() != null && item.getQuantityReserved() > item.getQuantityOnHand()) {
+            throw new IllegalArgumentException("Reserved quantity cannot be greater than quantity on hand");
+        }
+        if (item.getReorderLevel() != null && item.getReorderLevel() < 0) {
+            throw new IllegalArgumentException("Reorder level must be zero or greater");
+        }
+        if (item.getReorderQuantity() != null && item.getReorderQuantity() < 0) {
+            throw new IllegalArgumentException("Reorder quantity must be zero or greater");
+        }
+
+        inventoryItemRepository.findBySku(item.getSku())
+                .filter(existing -> !existing.getId().equals(currentId))
+                .ifPresent(existing -> {
+                    throw new IllegalArgumentException("SKU already exists: " + item.getSku());
+                });
+    }
+
+    private Integer defaultIfNull(Integer value, Integer fallback) {
+        return value != null ? value : fallback;
     }
 }
 

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { suppliersApi } from '../api/suppliers.api';
 import type { CreateSupplierRequest } from '../types';
+import { getApiErrorMessage } from '../utils/apiError';
 
 export const SUPPLIERS_KEY = 'suppliers';
 
@@ -25,7 +26,7 @@ export function useCreateSupplier() {
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier created successfully');
     },
-    onError: () => toast.error('Failed to create supplier'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to create supplier')),
   });
 }
 
@@ -38,7 +39,7 @@ export function useUpdateSupplier() {
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier updated successfully');
     },
-    onError: () => toast.error('Failed to update supplier'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to update supplier')),
   });
 }
 
@@ -50,7 +51,7 @@ export function useDeleteSupplier() {
       qc.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
       toast.success('Supplier deleted successfully');
     },
-    onError: () => toast.error('Failed to delete supplier'),
+    onError: (error) => toast.error(getApiErrorMessage(error, 'Failed to delete supplier')),
   });
 }
 

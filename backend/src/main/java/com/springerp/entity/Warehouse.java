@@ -1,5 +1,6 @@
 package com.springerp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "locations"})
 public class Warehouse extends BaseEntity {
 
     @Column(name = "warehouse_name", nullable = false, unique = true)

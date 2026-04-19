@@ -9,7 +9,9 @@ import {
   useUpdateInventoryItem,
   useDeleteInventoryItem,
   useAdjustStock,
+  useWarehouses,
 } from '../../hooks/useInventory';
+import { useProducts } from '../../hooks/useProducts';
 import { Table } from '../../components/common/Table';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
@@ -17,9 +19,12 @@ import { Input } from '../../components/common/Input';
 import { Badge } from '../../components/common/Badge';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { StatCard } from '../../components/common/StatCard';
+import { Select } from '../../components/common/Select';
 import type { InventoryItem } from '../../api/inventory.api';
 
 const itemSchema = z.object({
+  productId: z.coerce.number().min(1, 'Product is required'),
+  warehouseId: z.coerce.number().min(1, 'Warehouse is required'),
   sku: z.string().min(1, 'SKU is required'),
   quantityOnHand: z.coerce.number().int().min(0, 'Quantity must be non-negative'),
   quantityReserved: z.coerce.number().int().min(0).optional(),
@@ -43,6 +48,8 @@ export const InventoryPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const { data: itemPage, isLoading } = useInventoryItems(page, PAGE_SIZE);
   const { data: lowStockItems } = useLowStockItems();
+  const { data: products } = useProducts();
+  const { data: warehousePage } = useWarehouses(0, 100);
   const { mutate: createItem, isLoading: creating } = useCreateInventoryItem();
   const { mutate: updateItem, isLoading: updating } = useUpdateInventoryItem();
   const { mutate: deleteItem } = useDeleteInventoryItem();
@@ -75,7 +82,17 @@ export const InventoryPage: React.FC = () => {
   };
   const openEdit = (item: InventoryItem) => {
     setEditTarget(item);
-    reset(item);
+    reset({
+      productId: item.productId,
+      warehouseId: item.warehouseId,
+      sku: item.sku,
+      quantityOnHand: item.quantityOnHand,
+      quantityReserved: item.quantityReserved,
+      reorderLevel: item.reorderLevel,
+      reorderQuantity: item.reorderQuantity,
+      unitCost: item.unitCost,
+      location: item.location,
+    });
     setModalOpen(true);
   };
   const closeModal = () => {
@@ -112,6 +129,14 @@ export const InventoryPage: React.FC = () => {
   };
 
   const items = itemPage?.content ?? [];
+  const warehouseOptions = (warehousePage?.content ?? []).map((warehouse) => ({
+    value: warehouse.id,
+    label: `${warehouse.warehouseName} (${warehouse.warehouseCode})`,
+  }));
+  const productOptions = (products ?? []).map((product) => ({
+    value: product.id,
+    label: product.name,
+  }));
   const totalPages = itemPage?.totalPages ?? 1;
 
   const stockBadge = (item: InventoryItem) => {
@@ -183,6 +208,17 @@ export const InventoryPage: React.FC = () => {
         data={items}
         keyExtractor={(i) => i.id}
         columns={[
+          {
+            key: 'productName',
+            header: 'Product',
+            render: (i) => i.productName || '—',
+          },
+          {
+            key: 'warehouseId',
+            header: 'Warehouse',
+            render: (i) =>
+              warehousePage?.content.find((warehouse) => warehouse.id === i.warehouseId)?.warehouseName ?? '—',
+          },
           {
             key: 'sku',
             header: 'SKU',
@@ -260,6 +296,24 @@ export const InventoryPage: React.FC = () => {
         }
       >
         <form id="item-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Product"
+              placeholder="Select a product"
+              options={productOptions}
+              error={errors.productId?.message}
+              required
+              {...register('productId')}
+            />
+            <Select
+              label="Warehouse"
+              placeholder="Select a warehouse"
+              options={warehouseOptions}
+              error={errors.warehouseId?.message}
+              required
+              {...register('warehouseId')}
+            />
+          </div>
           <Input label="SKU" placeholder="e.g. SKU-001" error={errors.sku?.message} required {...register('sku')} />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Quantity On Hand" type="number" error={errors.quantityOnHand?.message} required {...register('quantityOnHand')} />

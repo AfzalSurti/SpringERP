@@ -173,6 +173,7 @@ export interface CreateEmployeeRequest {
   phone?: string;
   designation?: string;
   department?: string;
+  departmentId?: number;
   employmentType?: EmploymentType;
   employmentStatus?: EmploymentStatus;
   dateOfJoining?: string;
