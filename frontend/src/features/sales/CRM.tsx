@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import { Icons } from '../../components/Icons';
 import { Customer } from '../../types';
 import { generateCustomerEmail } from '../../services/geminiService';
-
-const mockCustomers: Customer[] = [
-  { id: 1, firstName: 'Alice', lastName: 'Freeman', companyName: 'Global Tech', email: 'alice@globaltech.com', stage: 'Negotiation', lastContact: '2 days ago', value: 45000 },
-  { id: 2, firstName: 'Bob', lastName: 'Smith', companyName: 'Smith Logistics', email: 'bob@smithlog.com', stage: 'Lead', lastContact: '1 week ago', value: 12000 },
-  { id: 3, firstName: 'Charlie', lastName: 'Davis', companyName: 'Davis Retail', email: 'charlie@davisretail.com', stage: 'Closed', lastContact: 'Yesterday', value: 8500 },
-  { id: 4, firstName: 'Diana', lastName: 'Prince', companyName: 'Themyscira Inc', email: 'diana@amazon.com', stage: 'Lead', lastContact: '3 days ago', value: 95000 },
-  { id: 5, firstName: 'Evan', lastName: 'Wright', companyName: 'WriteSolutions', email: 'evan@write.com', stage: 'Negotiation', lastContact: '5 hours ago', value: 2400 },
-];
+import { useCustomers } from '../../hooks/useCustomers';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const CRM: React.FC = () => {
+  const { data: customers, isLoading } = useCustomers();
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('kanban');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [emailContext, setEmailContext] = useState('');
   const [generatedDraft, setGeneratedDraft] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const pipelineCustomers = (customers ?? []).map((customer) => ({
+    ...customer,
+    stage: customer.stage ?? 'Lead',
+    value: customer.value ?? 0,
+  }));
 
   const handleGenerateEmail = async () => {
     if (!selectedCustomer) return;
@@ -34,6 +35,10 @@ const CRM: React.FC = () => {
       default: return 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300';
     }
   };
+
+  if (isLoading) {
+    return <div className="flex h-[calc(100vh-140px)] items-center justify-center text-sm text-slate-500">Loading CRM pipeline...</div>;
+  }
 
   return (
     <div className="space-y-6 h-[calc(100vh-140px)] flex flex-col">
@@ -74,14 +79,14 @@ const CRM: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                  {mockCustomers.map((c) => (
+                  {pipelineCustomers.map((c) => (
                     <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="font-medium text-slate-900 dark:text-white">{c.firstName} {c.lastName}</div>
                         <div className="text-xs text-slate-500 dark:text-slate-500">{c.email}</div>
                       </td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{c.companyName}</td>
-                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">${(c.value ?? 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{formatCurrencyINR(c.value)}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded text-xs font-medium border ${getStageColor(c.stage ?? '')}`}>
                           {c.stage}
@@ -107,11 +112,11 @@ const CRM: React.FC = () => {
                   <div className="flex justify-between items-center mb-3 px-1">
                     <h3 className="font-semibold text-slate-700 dark:text-slate-300 text-sm uppercase tracking-wide">{stage}</h3>
                     <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full">
-                      {mockCustomers.filter(c => c.stage === stage).length}
+                      {pipelineCustomers.filter(c => c.stage === stage).length}
                     </span>
                   </div>
                   <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
-                    {mockCustomers.filter(c => c.stage === stage).map(c => (
+                    {pipelineCustomers.filter(c => c.stage === stage).map(c => (
                         <div
                         key={c.id}
                         onClick={() => { setSelectedCustomer(c); setGeneratedDraft(''); setEmailContext(''); }}
@@ -123,7 +128,7 @@ const CRM: React.FC = () => {
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{c.firstName} {c.lastName}</p>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm font-bold text-slate-900 dark:text-white">${(c.value ?? 0).toLocaleString()}</span>
+                          <span className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrencyINR(c.value)}</span>
                           <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
                             {c.firstName.charAt(0)}
                           </div>

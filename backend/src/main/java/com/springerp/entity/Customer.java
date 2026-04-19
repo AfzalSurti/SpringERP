@@ -13,6 +13,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Customer entity. Audit fields (createdAt, updatedAt, isDeleted) are inherited from BaseEntity.
@@ -41,6 +43,15 @@ public class Customer extends BaseEntity {
 
     @Column(length = 255)
     private String address;
+
+    @Column(name = "crm_stage", length = 50)
+    private String crmStage;
+
+    @Column(name = "deal_value", precision = 19, scale = 2)
+    private BigDecimal dealValue;
+
+    @Column(name = "last_contact_at")
+    private LocalDateTime lastContactAt;
 
     @NotNull(message = "Company is required")
     @ManyToOne(fetch = FetchType.EAGER)

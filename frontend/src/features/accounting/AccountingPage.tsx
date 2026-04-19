@@ -5,6 +5,7 @@ import { Table } from '../../components/common/Table';
 import { Badge } from '../../components/common/Badge';
 import { StatCard } from '../../components/common/StatCard';
 import type { ChartOfAccount } from '../../types';
+import { formatCurrencyINR } from '../../utils/currency';
 
 export const AccountingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'accounts' | 'journal'>('accounts');
@@ -48,9 +49,9 @@ export const AccountingPage: React.FC = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard title="Total Assets" value={`$${totalAssets.toLocaleString()}`} icon="💰" color="green" />
-        <StatCard title="Total Liabilities" value={`$${totalLiabilities.toLocaleString()}`} icon="📋" color="red" />
-        <StatCard title="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon="📈" color="blue" />
+        <StatCard title="Total Assets" value={formatCurrencyINR(totalAssets)} icon="💰" color="green" />
+        <StatCard title="Total Liabilities" value={formatCurrencyINR(totalLiabilities)} icon="📋" color="red" />
+        <StatCard title="Total Revenue" value={formatCurrencyINR(totalRevenue)} icon="📈" color="blue" />
       </div>
 
       {/* Tabs */}
@@ -87,7 +88,7 @@ export const AccountingPage: React.FC = () => {
             { key: 'accountCategory', header: 'Category', render: (a) => a.accountCategory ?? '—' },
             {
               key: 'currentBalance', header: 'Balance',
-              render: (a) => a.currentBalance != null ? `$${a.currentBalance.toLocaleString()}` : '—',
+              render: (a) => a.currentBalance != null ? formatCurrencyINR(a.currentBalance) : '—',
             },
             {
               key: 'isActive', header: 'Status',

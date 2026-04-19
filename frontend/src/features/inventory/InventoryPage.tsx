@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { StatCard } from '../../components/common/StatCard';
 import { Select } from '../../components/common/Select';
 import type { InventoryItem } from '../../api/inventory.api';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const itemSchema = z.object({
   productId: z.coerce.number().min(1, 'Product is required'),
@@ -191,7 +192,7 @@ export const InventoryPage: React.FC = () => {
         />
         <StatCard
           title="Total Stock Value"
-          value={`$${items.reduce((sum, i) => sum + (i.quantityOnHand * (i.unitCost ?? 0)), 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+          value={formatCurrencyINR(items.reduce((sum, i) => sum + (i.quantityOnHand * (i.unitCost ?? 0)), 0))}
           icon={
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -245,7 +246,7 @@ export const InventoryPage: React.FC = () => {
             key: 'unitCost',
             header: 'Unit Cost',
             render: (i) =>
-              i.unitCost != null ? `$${i.unitCost.toFixed(2)}` : '—',
+              i.unitCost != null ? formatCurrencyINR(i.unitCost) : '—',
           },
           {
             key: 'status',
@@ -324,7 +325,7 @@ export const InventoryPage: React.FC = () => {
             <Input label="Reorder Quantity" type="number" {...register('reorderQuantity')} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Unit Cost ($)" type="number" step="0.01" {...register('unitCost')} />
+            <Input label="Unit Cost (₹)" type="number" step="0.01" {...register('unitCost')} />
             <Input label="Location" placeholder="e.g. Aisle 3" {...register('location')} />
           </div>
         </form>

@@ -34,6 +34,9 @@ public class CustomerService {
         customer.setEmail(customerDetails.getEmail());
         customer.setPhone(customerDetails.getPhone());
         customer.setAddress(customerDetails.getAddress());
+        customer.setCrmStage(customerDetails.getCrmStage());
+        customer.setDealValue(customerDetails.getDealValue());
+        customer.setLastContactAt(customerDetails.getLastContactAt());
         customer.setCompany(customerDetails.getCompany());
 
         log.info("Updating customer with id: {}", id);

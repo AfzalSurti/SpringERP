@@ -19,6 +19,9 @@ function mapCustomer(customer: any): Customer {
     email: customer.email,
     phone: customer.phone,
     address: customer.address,
+    stage: customer.crmStage ?? 'Lead',
+    lastContact: customer.lastContactAt,
+    value: customer.dealValue != null ? Number(customer.dealValue) : 0,
     companyId: customer.company?.id,
     companyName: customer.company?.companyName ?? customer.company?.name,
     createdAt: customer.createdAt,
@@ -32,6 +35,9 @@ function toCustomerPayload(data: CreateCustomerRequest) {
     email: data.email,
     phone: data.phone,
     address: data.address,
+    crmStage: data.stage ?? 'Lead',
+    dealValue: data.value ?? 0,
+    lastContactAt: data.lastContact ? (data.lastContact.includes('T') ? data.lastContact : `${data.lastContact}T00:00:00`) : undefined,
     company: { id: data.companyId ?? 1 },
   };
 }

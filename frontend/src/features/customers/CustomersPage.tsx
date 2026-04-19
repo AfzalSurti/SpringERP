@@ -12,8 +12,10 @@ import { Table } from '../../components/common/Table';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
 import { Input } from '../../components/common/Input';
+import { Select } from '../../components/common/Select';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import type { Customer, CreateCustomerRequest } from '../../types';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const customerSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -24,6 +26,9 @@ const customerSchema = z.object({
   city: z.string().optional(),
   country: z.string().optional(),
   companyName: z.string().optional(),
+  stage: z.enum(['Lead', 'Negotiation', 'Closed'] as const).optional(),
+  value: z.coerce.number().min(0, 'Deal value must be non-negative').optional(),
+  lastContact: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -54,7 +59,20 @@ export const CustomersPage: React.FC = () => {
 
   const openEdit = (customer: Customer) => {
     setEditTarget(customer);
-    reset(customer);
+    reset({
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email ?? '',
+      phone: customer.phone,
+      address: customer.address,
+      city: customer.city,
+      country: customer.country,
+      companyName: customer.companyName,
+      notes: customer.notes,
+      stage: customer.stage === 'Negotiation' || customer.stage === 'Closed' ? customer.stage : 'Lead',
+      value: customer.value,
+      lastContact: customer.lastContact ? customer.lastContact.split('T')[0] : undefined,
+    });
     setModalOpen(true);
   };
 
@@ -117,7 +135,8 @@ export const CustomersPage: React.FC = () => {
           { key: 'email', header: 'Email' },
           { key: 'phone', header: 'Phone' },
           { key: 'companyName', header: 'Company' },
-          { key: 'city', header: 'City' },
+          { key: 'stage', header: 'Stage', render: (c) => c.stage ?? 'Lead' },
+          { key: 'value', header: 'Deal Value', render: (c) => formatCurrencyINR(c.value) },
           {
             key: 'actions',
             header: 'Actions',
@@ -148,6 +167,18 @@ export const CustomersPage: React.FC = () => {
           <Input label="Email" type="email" required error={errors.email?.message} {...register('email')} />
           <Input label="Phone" {...register('phone')} />
           <Input label="Company Name" {...register('companyName')} />
+          <Select
+            label="CRM Stage"
+            options={[
+              { value: 'Lead', label: 'Lead' },
+              { value: 'Negotiation', label: 'Negotiation' },
+              { value: 'Closed', label: 'Closed' },
+            ]}
+            placeholder="Select stage..."
+            {...register('stage')}
+          />
+          <Input label="Deal Value" type="number" step="0.01" error={errors.value?.message} {...register('value')} />
+          <Input label="Last Contact" type="date" {...register('lastContact')} />
           <Input label="City" {...register('city')} />
           <Input label="Country" {...register('country')} />
           <Input label="Address" {...register('address')} />

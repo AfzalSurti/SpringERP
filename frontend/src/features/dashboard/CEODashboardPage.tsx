@@ -1,36 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { Icons } from '../../components/Icons';
 import { analyzeFinancialHealth } from '../../services/geminiService';
-
-const revenueData = [
-  { name: 'Jan', value: 4.2 },
-  { name: 'Feb', value: 3.8 },
-  { name: 'Mar', value: 5.1 },
-  { name: 'Apr', value: 4.9 },
-  { name: 'May', value: 6.2 },
-  { name: 'Jun', value: 7.5 },
-];
+import { customersApi } from '../../api/customers.api';
+import { invoicesApi } from '../../api/invoices.api';
+import { inventoryApi } from '../../api/inventory.api';
+import { employeesApi } from '../../api/employees.api';
+import { formatCurrencyINR } from '../../utils/currency';
 
 export const CEODashboardPage: React.FC = () => {
   const [aiBriefing, setAiBriefing] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState(false);
+  const { data: customers = [] } = useQuery({ queryKey: ['ceo-customers'], queryFn: customersApi.getAll });
+  const { data: invoicesPage } = useQuery({
+    queryKey: ['ceo-invoices'],
+    queryFn: () => invoicesApi.getAll(0, 200, 'invoiceDate'),
+  });
+  const { data: inventoryPage } = useQuery({
+    queryKey: ['ceo-inventory'],
+    queryFn: () => inventoryApi.getItems(0, 200),
+  });
+  const { data: employees = [] } = useQuery({ queryKey: ['ceo-employees'], queryFn: employeesApi.getAll });
+
+  const invoices = invoicesPage?.content ?? [];
+  const inventoryItems = inventoryPage?.content ?? [];
+  const totalRevenue = invoices.reduce((sum, invoice) => sum + (invoice.totalAmount ?? 0), 0);
+  const netLiquidity = invoices
+    .filter((invoice) => invoice.status === 'PAID')
+    .reduce((sum, invoice) => sum + (invoice.totalAmount ?? 0), 0);
+  const dealPipelineValue = customers
+    .filter((customer) => customer.stage !== 'Closed')
+    .reduce((sum, customer) => sum + (customer.value ?? 0), 0);
+  const revenueData = buildRevenueData(invoices);
+  const inventoryValue = inventoryItems.reduce((sum, item) => sum + (item.quantityOnHand * (item.unitCost ?? 0)), 0);
 
   const triggerAiBriefing = async () => {
     setIsSyncing(true);
-    // Mocking high-level strategic data for the prompt
-    const summary = await analyzeFinancialHealth([
-      { id: '1', date: '2025', description: 'Annual Growth', amount: 7500000, type: 'Income', category: 'Global' }
-    ]);
+    const summary = await analyzeFinancialHealth(
+      invoices.map((invoice) => ({
+        id: invoice.id,
+        date: invoice.invoiceDate,
+        description: invoice.invoiceNumber,
+        amount: invoice.totalAmount ?? 0,
+      })),
+    );
     setAiBriefing(summary);
     setIsSyncing(false);
   };
 
   useEffect(() => {
     triggerAiBriefing();
-  }, []);
+  }, [invoices.length]);
 
   return (
     <div className="space-y-8 animate-[fadeUp_0.8s_ease-out_forwards] pb-12">
@@ -56,10 +79,10 @@ export const CEODashboardPage: React.FC = () => {
       {/* Primary KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Market Valuation', value: '$128.4M', change: '+14.2%', icon: Icons.Analytics, trend: 'up' },
-          { label: 'Net Liquidity', value: '$14.2M', change: '+2.1%', icon: Icons.Finance, trend: 'up' },
-          { label: 'OpEx Efficiency', value: '92.4%', change: '-0.8%', icon: Icons.Activity, trend: 'neutral' },
-          { label: 'Global Reach', value: '42 Nodes', change: '+4', icon: Icons.Network, trend: 'up' },
+          { label: 'Booked Revenue', value: formatCurrencyINR(totalRevenue), change: `${invoices.length} invoices`, icon: Icons.Analytics, trend: 'up' },
+          { label: 'Net Liquidity', value: formatCurrencyINR(netLiquidity), change: `${customers.length} customers`, icon: Icons.Finance, trend: 'up' },
+          { label: 'Pipeline Value', value: formatCurrencyINR(dealPipelineValue), change: `${customers.filter((customer) => customer.stage !== 'Closed').length} open deals`, icon: Icons.Activity, trend: 'up' },
+          { label: 'Operational Reach', value: `${employees.length} team`, change: `${inventoryItems.length} stock lines`, icon: Icons.Network, trend: 'up' },
         ].map((kpi, i) => (
           <div key={i} className="glass bg-white dark:bg-transparent p-6 rounded-[2rem] border-slate-200 dark:border-white/5 relative overflow-hidden group hover:border-indigo-500/30 transition-all">
              <div className="relative z-10">
@@ -87,7 +110,7 @@ export const CEODashboardPage: React.FC = () => {
            <div className="flex justify-between items-center mb-10">
               <div>
                  <h3 className="text-xl font-black text-slate-900 dark:text-white">Revenue Velocity</h3>
-                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Global Aggregate ($M)</p>
+                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Monthly Revenue (INR)</p>
               </div>
               <div className="flex gap-2">
                  <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 dark:text-slate-400">
@@ -110,6 +133,7 @@ export const CEODashboardPage: React.FC = () => {
                     <Tooltip 
                        contentStyle={{backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem'}}
                        itemStyle={{color: '#fff', fontSize: '12px', fontWeight: 'bold'}}
+                       formatter={(value: number) => formatCurrencyINR(value)}
                     />
                     <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={4} fillOpacity={1} fill="url(#ceoRev)" />
                  </AreaChart>
@@ -142,7 +166,7 @@ export const CEODashboardPage: React.FC = () => {
                  <div className="flex-1 space-y-6">
                     <div className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
                        <p className="text-xs font-bold text-slate-600 dark:text-slate-400 leading-relaxed italic">
-                         "Synthesized current operational patterns. Financial health remains robust with a 12.4% uptick in service-sector margins."
+                         Current database metrics show {customers.length} customers, {employees.length} employees, and inventory worth {formatCurrencyINR(inventoryValue)}.
                        </p>
                     </div>
                     <div className="space-y-4">
@@ -166,3 +190,27 @@ export const CEODashboardPage: React.FC = () => {
     </div>
   );
 };
+
+function buildRevenueData(invoices: Array<{ invoiceDate: string; totalAmount?: number }>) {
+  const monthlyTotals = new Map<string, number>();
+
+  invoices.forEach((invoice) => {
+    const date = new Date(invoice.invoiceDate);
+    if (Number.isNaN(date.getTime())) {
+      return;
+    }
+
+    const label = date.toLocaleDateString('en-IN', { month: 'short' });
+    monthlyTotals.set(label, (monthlyTotals.get(label) ?? 0) + (invoice.totalAmount ?? 0));
+  });
+
+  if (monthlyTotals.size === 0) {
+    const now = new Date();
+    return Array.from({ length: 6 }, (_, index) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
+      return { name: date.toLocaleDateString('en-IN', { month: 'short' }), value: 0 };
+    });
+  }
+
+  return Array.from(monthlyTotals.entries()).map(([name, value]) => ({ name, value }));
+}

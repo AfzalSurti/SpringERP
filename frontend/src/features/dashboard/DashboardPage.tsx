@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icons } from '../../components/Icons';
 import { useAuthStore } from '../../store/auth.store';
+import { formatCurrencyINR } from '../../utils/currency';
 
 // We inline the Company type for safety, or use existing from types if available
 interface Company {
@@ -74,7 +75,7 @@ export const DashboardPage: React.FC = () => {
                       <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl">+18.4%</span>
                    </div>
                    <p className="text-[11px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em] mb-2">Portfolio Delta</p>
-                   <h4 className="text-4xl font-black text-slate-950 dark:text-white">$24.8B</h4>
+                   <h4 className="text-4xl font-black text-slate-950 dark:text-white">{formatCurrencyINR(24800000000)}</h4>
                 </div>
 
                 <div className="glass absolute -bottom-12 -left-12 p-12 rounded-[4rem] border-slate-300 dark:border-white/20 shadow-2xl z-10 w-80 -rotate-6 group-hover:rotate-0 transition-all duration-1000">

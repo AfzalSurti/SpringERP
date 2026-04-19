@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -30,6 +31,12 @@ public class CustomerDTO {
 
     @Size(max = 255)
     private String address;
+
+    @Size(max = 50)
+    private String crmStage;
+
+    private BigDecimal dealValue;
+    private LocalDateTime lastContactAt;
 
     private Long companyId;
     private String companyName;

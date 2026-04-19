@@ -16,6 +16,7 @@ import { Select } from '../../components/common/Select';
 import { Badge } from '../../components/common/Badge';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import type { Employee, CreateEmployeeRequest, EmploymentStatus } from '../../types';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -98,7 +99,7 @@ export const EmployeesPage: React.FC = () => {
           },
           {
             key: 'baseSalary', header: 'Salary',
-            render: (e) => e.baseSalary ? `$${e.baseSalary.toLocaleString()}` : '—',
+            render: (e) => e.baseSalary ? formatCurrencyINR(e.baseSalary) : '—',
           },
           {
             key: 'actions', header: 'Actions',

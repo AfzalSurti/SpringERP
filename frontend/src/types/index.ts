@@ -86,6 +86,9 @@ export interface CreateCustomerRequest {
   companyName?: string;
   companyId?: number;
   notes?: string;
+  stage?: string;
+  lastContact?: string;
+  value?: number;
 }
 
 // ─── Supplier ─────────────────────────────────────────────────────────────────

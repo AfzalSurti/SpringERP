@@ -18,6 +18,7 @@ import { Select } from '../../components/common/Select';
 import { Badge } from '../../components/common/Badge';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import type { Invoice, CreateInvoiceRequest, InvoiceItem, InvoiceStatus } from '../../types';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const invoiceSchema = z.object({
   customerId: z.coerce.number().min(1, 'Customer is required'),
@@ -77,7 +78,7 @@ export const InvoicesPage: React.FC = () => {
 
   const productOptions = (products ?? []).map((product) => ({
     value: product.id,
-    label: `${product.name} ($${product.price.toFixed(2)})`,
+    label: `${product.name} (${formatCurrencyINR(product.price)})`,
   }));
 
   const selectedProduct = products?.find((product) => product.id === selectedProductId);
@@ -174,7 +175,7 @@ export const InvoicesPage: React.FC = () => {
           { key: 'customerName', header: 'Customer', render: (i) => i.customerName || '—' },
           { key: 'invoiceDate', header: 'Date', render: (i) => new Date(i.invoiceDate).toLocaleDateString() },
           { key: 'dueDate', header: 'Due Date', render: (i) => i.dueDate ? new Date(i.dueDate).toLocaleDateString() : '—' },
-          { key: 'totalAmount', header: 'Amount', render: (i) => <span className="font-semibold">${(i.totalAmount ?? 0).toLocaleString()}</span> },
+          { key: 'totalAmount', header: 'Amount', render: (i) => <span className="font-semibold">{formatCurrencyINR(i.totalAmount)}</span> },
           { key: 'status', header: 'Status', render: (i) => <Badge label={i.status} variant={statusBadgeVariant(i.status)} /> },
           {
             key: 'actions', header: 'Actions',
@@ -259,7 +260,7 @@ export const InvoicesPage: React.FC = () => {
                     <div>
                       <p className="text-sm font-medium text-gray-800">{item.description}</p>
                       <p className="text-xs text-gray-500">
-                        Qty {item.quantity} x ${item.unitPrice.toFixed(2)} = ${(item.totalPrice ?? 0).toFixed(2)}
+                        Qty {item.quantity} x {formatCurrencyINR(item.unitPrice)} = {formatCurrencyINR(item.totalPrice)}
                       </p>
                     </div>
                     <Button type="button" size="sm" variant="danger" onClick={() => removeInvoiceItem(index)}>

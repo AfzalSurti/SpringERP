@@ -14,6 +14,7 @@ import { Modal } from '../../components/common/Modal';
 import { Input } from '../../components/common/Input';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import type { Product, CreateProductRequest } from '../../types';
+import { formatCurrencyINR } from '../../utils/currency';
 
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -78,7 +79,7 @@ export const ProductsPage: React.FC = () => {
           { key: 'sku', header: 'SKU' },
           {
             key: 'price', header: 'Price',
-            render: (p) => <span className="font-semibold text-gray-700">${p.price.toLocaleString()}</span>,
+            render: (p) => <span className="font-semibold text-gray-700">{formatCurrencyINR(p.price)}</span>,
           },
           {
             key: 'stockQuantity', header: 'Stock',
